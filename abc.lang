@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+ This file contains GtkSourceView syntax highlighting definition
+ for ABC Music Notation Files
+
+ Authors: B. Petersen, http://b44t.com
+
+ This file is free software; you can redistribute it and/or
+ modify it under the terms of the same license GtkSourceView uses.
+ 
+ I would be glad if this file finds its way to the default GtkSourceView 
+ languages.
+
+ Details about GtkSourceView syntax highlighting:
+ https://developer.gnome.org/gtksourceview/stable/lang-tutorial.html
+ 
+ Details about the ABC Music Notation format:
+ http://abcnotation.com/wiki/abc:standard:v2.1
+
+-->
+<language id="abc" _name="ABC Music Notation" version="2.0" _section="Sources">
+  <metadata>
+    <property name="mimetypes">text/vnd.abc;text/abc</property>
+    <property name="globs">*.abc</property>
+  </metadata>
+  <styles>
+    <style id="comment" _name="Comment" map-to="def:comment"/>
+    <style id="keyword" _name="Keyword" map-to="def:keyword"/>
+    <style id="string"  _name="String"  map-to="def:string"/>
+  </styles>
+  <definitions>
+  
+  	<!-- special lines -->
+  	
+    <context id="comment" style-ref="comment">	<!-- % comment to end of line, percent sign can be anywhere in the line -->
+      <start>%</start>
+      <end>$</end>
+    </context>
+    
+    <context id="lyrics" style-ref="string">	<!-- w:lyrics below music lines, no leading spaces -->
+      <start>^[Ww]:</start>						<!-- W:lyrics below all notes, no leading spaces -->
+      <end>$</end>								<!-- (also used to remove this from music lines) -->
+    </context>
+    
+    <context id="header">						<!-- T:Title etc., no leading spaces -->
+      <start>^[a-zA-Z]:</start>					<!-- (also used to remove this from music lines) -->
+      <end>$</end>    							
+    </context>
+
+	<!-- stuff inside a music line -->
+
+    <context id="remark" style-ref="comment">	<!-- [r:remarks inside a music line] -->
+      <start>\[r:</start>
+      <end>]</end>
+    </context>
+    
+    <context id="noterem" style-ref="comment">	<!-- "<remarks on notes" "^remark" ">remark" "_remark" -->
+      <start>&quot;[&lt;&gt;\^_]</start>
+      <end>&quot;</end>
+    </context>    
+    
+    <context id="quoted" style-ref="string">	<!-- "quoted stuff inside a music line, eg. chords" -->
+      <start>&quot;</start>						<!-- (also used to remove this from pitch matching) -->
+      <end>&quot;</end>
+    </context>
+    
+    <context id="pitch" style-ref="keyword">	<!-- the pitch of notes -->
+      <match>[\^_=]?[abcdefgzABCDEFG][,']*</match>
+    </context>
+    
+	<!-- bring the contexts together, the order matters here, if a context is found, matching is stopped -->
+	
+    <context id="abc" class="no-spell-check">
+      <include>
+        <context ref="comment"/>				<!-- special lines -->
+        <context ref="lyrics"/>
+        <context ref="header"/>        
+        <context ref="remark"/>					<!-- stuff inside a music line -->
+        <context ref="noterem"/>
+        <context ref="quoted"/>
+        <context ref="pitch"/>
+      </include>
+    </context> 
+  </definitions>
+</language>
